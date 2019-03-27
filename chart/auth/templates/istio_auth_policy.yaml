@@ -1,0 +1,15 @@
+{{ if or .Values.global.istio.enabled .Values.istio.enabled }}
+apiVersion: "authentication.istio.io/v1alpha1"
+kind: "Policy"
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.service.name }}
+spec:
+  targets:
+  - name: {{ .Release.Name }}-{{ .Values.service.name }}
+    ports:
+    - number: {{ .Values.service.servicePortHttps }}
+  peers:
+  {{- if eq .Values.istio.mTLS "ISTIO_MUTUAL" }}
+  - mtls: 
+  {{- end }}
+{{ end }}
