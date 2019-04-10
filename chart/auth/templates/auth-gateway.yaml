@@ -1,0 +1,67 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: auth-gateway
+spec:
+  selector:
+    istio: ingressgateway
+    # app: bluecompute
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    # tls:
+    #   httpsRedirect: true
+    hosts:
+    - "*"
+    # - release-name-auth.default.svc.cluster.local
+  # - port:
+  #     number: 443
+  #     name: https
+  #     protocol: HTTPS
+  #   hosts:
+  #   - "*"
+  #   # - release-name-auth.default.svc.cluster.local
+  #   tls:
+  #     mode: SIMPLE
+  #     serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+  #     privateKey: /etc/istio/ingressgateway-certs/tls.key
+  # - port:
+  #     number: 9080
+  #     name: http-wildcard
+  #     protocol: HTTP
+  #   hosts:
+  #   - "*"
+  # - port:
+  #     number: 9443
+  #     name: https-9443
+  #     protocol: HTTPS
+  #   hosts:
+  #   - "*"
+  #   tls:
+  #     mode: SIMPLE # enables HTTPS on this port
+  #     serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+  #     privateKey: /etc/istio/ingressgateway-certs/tls.key
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: auth
+spec:
+  hosts:
+  - "*"
+  # - release-name-auth.default.svc.cluster.local
+  gateways:
+  - auth-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        # host: "*"
+        host: release-name-auth #.default.svc.cluster.local
+        # subset: v3
+        port:
+          number: 9080

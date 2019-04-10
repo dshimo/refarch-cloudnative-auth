@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: auth
+spec:
+  # host: "*"
+  host: release-name-auth.default.svc.cluster.local
+  # trafficPolicy:
+  #   tls:
+  #     mode: SIMPLE
+  subsets:
+  - name: v3
+    labels:
+      version: v3
